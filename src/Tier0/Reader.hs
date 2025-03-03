@@ -12,13 +12,20 @@ data Environment = Environment
 type EnvironmentM = Reader Environment
 
 formatUserName :: EnvironmentM String
-formatUserName = undefined
-  
+formatUserName = do
+  env <- ask
+  return $ if isSuperUser env then "root" else username env
+
 formatHost :: EnvironmentM String
-formatHost = undefined
+formatHost = asks host
 
 formatCurrentDir :: EnvironmentM String
-formatCurrentDir = undefined
+formatCurrentDir = asks currentDir
 
 formatPrompt :: EnvironmentM String
-formatPrompt = undefined
+formatPrompt = do
+  user <- formatUserName
+  h <- formatHost
+  dir <- formatCurrentDir
+  return $ user ++ "@" ++ h ++ ":" ++ dir ++ "$"
+
